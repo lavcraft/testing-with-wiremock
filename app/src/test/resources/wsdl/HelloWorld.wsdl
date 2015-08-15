@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:tns="http://ws.test.lavcraft"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        targetNamespace="http://ws.test.lavcraft"
+        name="HelloWorldImplService">
+
+    <types>
+        <xsd:schema targetNamespace="http://ws.test.lavcraft">
+
+            <xsd:element name="HelloWorldResponse" type="tns:HelloWorldResponse"/>
+            <xsd:complexType name="HelloWorldResponse">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" name="message" type="xsd:string"/>
+                    <xsd:element minOccurs="1" name="valid" type="xsd:boolean"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="HelloWorldRequest" type="tns:HelloWorldRequest"/>
+            <xsd:complexType name="HelloWorldRequest">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" name="name" type="xsd:string"/>
+                    <xsd:element minOccurs="1" name="valid" type="xsd:boolean"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+
+    <message name="HelloWorldRequestMessage">
+        <part name="helloWorld" element="tns:HelloWorldRequest"/>
+    </message>
+
+    <message name="HelloWorldResponseMessage">
+        <part name="return" element="tns:HelloWorldResponse"/>
+    </message>
+
+    <portType name="HelloWorld">
+        <operation name="getHelloWorldAsString">
+            <input message="tns:HelloWorldRequestMessage"/>
+            <output message="tns:HelloWorldResponseMessage"/>
+        </operation>
+    </portType>
+
+    <binding name="HelloWorldImplPortBinding" type="tns:HelloWorld">
+
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="getHelloWorldAsString">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal" namespace="http://ws.test.lavcraft"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://ws.test.lavcraft"/>
+            </output>
+        </operation>
+
+    </binding>
+
+    <service name="HelloWorldImplService">
+        <port name="HelloWorldImplPort" binding="tns:HelloWorldImplPortBinding">
+            <soap:address location="http://localhost:9999/ws/hello"/>
+        </port>
+    </service>
+</definitions>
