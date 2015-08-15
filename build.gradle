@@ -1,0 +1,89 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+  dependencies {
+    classpath 'org.zeroturnaround:gradle-jrebel-plugin:1.+'
+    classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
+  }
+}
+
+plugins {
+  id 'nebula.nebula-release' version '2.2.5'
+  id "io.spring.dependency-management" version "0.5.2.RELEASE"
+}
+
+allprojects {
+  version = '1.0.0.SNAPSHOT'
+  group = 'lavcraft.test.wiremock'
+
+
+  apply plugin: 'idea'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'provided-base'
+  apply plugin: 'findbugs'
+  apply plugin: 'checkstyle'
+
+  dependencyManagement {
+    dependencies {
+      dependencySet(group: 'org.apache.cxf', version: '3.1.0') {
+        entry 'cxf-core'
+        entry 'cxf-rt-frontend-jaxws'
+        entry 'cxf-rt-transports-http'
+        entry 'cxf-rt-ws-security'
+        entry 'cxf-rt-bindings-soap'
+      }
+
+      dependency 'org.projectlombok:lombok:1.16.4'
+      dependency 'org.codehaus.groovy:groovy-all:2.4.4'
+
+      dependency 'org.slf4j:slf4j-api:1.7.12'
+      dependency 'ch.qos.logback:logback-classic:1.1.2'
+
+      dependency 'org.spockframework:spock-core:1.0-groovy-2.4'
+      dependency 'junit:junit:4.11'
+      dependency 'com.github.tomakehurst:wiremock:1.57'
+    }
+  }
+
+  task resolveAllDependencies {
+    doLast {
+      configurations.all { it.resolve() }
+    }
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'groovy'
+
+  dependencies {
+    provided "org.projectlombok:lombok"
+    compile 'org.codehaus.groovy:groovy-all'
+    compile 'org.slf4j:slf4j-api'
+
+    testCompile 'junit:junit'
+    testCompile 'org.spockframework:spock-core'
+  }
+}
+
+repositories {
+  mavenLocal()
+  jcenter()
+}
+
+dependencies {
+//  compile 'org.slf4j:slf4j-api:1.7.12'
+//  testCompile 'junit:junit:4.12'
+}
+
+idea {
+  project {
+    languageLevel = 1.8
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.6'
+}

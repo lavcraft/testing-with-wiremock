@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+repositories {
+  mavenLocal()
+  jcenter()
+}
+
+dependencies {
+  compile 'org.apache.cxf:cxf-core:3.1.0'
+  compile 'org.apache.cxf:cxf-rt-frontend-jaxws:3.1.0'
+  compile 'org.apache.cxf:cxf-rt-transports-http:3.1.0'
+  compile 'org.apache.cxf:cxf-rt-ws-security:3.1.0'
+  compile 'org.apache.cxf:cxf-rt-bindings-soap:3.1.0'
+
+  compile 'ch.qos.logback:logback-classic'
+  compile 'com.github.tomakehurst:wiremock'
+}
