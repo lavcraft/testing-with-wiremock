@@ -44,6 +44,7 @@ allprojects {
       dependency 'org.spockframework:spock-core:1.0-groovy-2.4'
       dependency 'junit:junit:4.11'
       dependency 'com.github.tomakehurst:wiremock:1.57'
+      dependency 'com.github.stefanbirkner:system-rules:1.12.1'
     }
   }
 

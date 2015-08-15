@@ -15,4 +15,6 @@ dependencies {
 
   compile 'ch.qos.logback:logback-classic'
   compile 'com.github.tomakehurst:wiremock'
+
+  testCompile 'com.github.stefanbirkner:system-rules'
 }
