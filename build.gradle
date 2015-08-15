@@ -59,6 +59,11 @@ subprojects {
   apply plugin: 'java'
   apply plugin: 'groovy'
 
+  compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+  }
+
   dependencies {
     provided "org.projectlombok:lombok"
     compile 'org.codehaus.groovy:groovy-all'
@@ -81,7 +86,8 @@ dependencies {
 
 idea {
   project {
-    languageLevel = 1.8
+    languageLevel = '1.8'
+    vcs = 'Git'
   }
 }
 
