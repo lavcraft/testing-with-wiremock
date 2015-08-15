@@ -3,7 +3,7 @@ import ch.qos.logback.core.ConsoleAppender
 
 appender("STDOUT", ConsoleAppender) {
   encoder(PatternLayoutEncoder) {
-    pattern = "%-4relative %logger [%thread] - %msg%n"
+    pattern = "%-4relative [%-40logger{10}][%thread] - %msg%n"
   }
 }
 
