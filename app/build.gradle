@@ -15,6 +15,7 @@ dependencies {
 
   compile 'ch.qos.logback:logback-classic'
   compile 'com.github.tomakehurst:wiremock'
+  compile 'io.fastjson:boon'
 
   testCompile 'com.github.stefanbirkner:system-rules'
 }
