@@ -5,11 +5,13 @@ import lavcraft.test.ws.HelloWorld
 import lavcraft.test.ws.HelloWorldRequest
 import lavcraft.test.ws.HelloWorldResponse
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean
+import org.apache.cxf.message.Message
 import org.apache.cxf.phase.Phase
+import org.boon.Boon
+import org.cxf.interceptor.test.NestedObject
+import org.cxf.interceptor.test.RequestWithDNestedObject
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.SystemOutRule
-import org.junit.runner.RunWith
-import org.spockframework.runtime.Sputnik
 import spock.lang.Specification
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -18,7 +20,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
  * @since 15/08/15
  */
 @Slf4j
-@RunWith(Sputnik)
 class ReflectionCxfInterceptorSpec extends Specification {
   public static final int PORT = 8089
 
@@ -57,6 +58,42 @@ class ReflectionCxfInterceptorSpec extends Specification {
     separator.contains 'Hello friend!'
     separator.contains 'valid'
     separator.contains 'true'
+    !separator.contains('class')
+  }
+
+  def 'should parse nested object'() {
+    setup:
+    outRule.clearLog()
+    def interceptor = new ReflectionCxfInterceptor()
+    def message = Mock(Message)
+    def targetObject = RequestWithDNestedObject.builder()
+        .rootProperty('rootPropertyValue')
+        .nested(NestedObject.builder()
+        .property('test')
+        .build())
+        .build()
+
+    when:
+    interceptor.handleMessage(message)
+
+    then:
+    //noinspection GroovyAssignabilityCheck
+    1 * message.getContent(_) >> [targetObject]
+
+    def result = Boon.fromJson(getJsonFromLog())
+
+    targetObject.rootProperty == result.rootProperty
+    targetObject.nested.property == result.nested.property
+
+    cleanup:
+    outRule.clearLog()
+  }
+
+  public String getJsonFromLog() {
+    def log = outRule.getLog()
+    def jsonStart = log.indexOf('{')
+    def substring = log.substring(jsonStart - 1)
+    substring
   }
 
   private static HelloWorldResponse invokeWs() {
@@ -71,8 +108,7 @@ class ReflectionCxfInterceptorSpec extends Specification {
     factory.serviceClass = HelloWorld
     factory.address = "http://localhost:${PORT}/api/"
 
-    HelloWorld srv = factory.create() as HelloWorld
-    srv
+    return factory.create() as HelloWorld
   }
 
   private static void initInterceptors(JaxWsProxyFactoryBean factory) {

@@ -6,12 +6,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,23 +28,17 @@ public class ReflectionCxfInterceptor extends AbstractPhaseInterceptor {
   @Override
   @SuppressWarnings("unchecked")
   public void handleMessage(Message message) throws Fault {
-    List<Object> messagePartList = message.getContent(List.class);
-
-    Optional.ofNullable(messagePartList)
+    Optional.ofNullable(message.getContent(List.class))
         .ifPresent(list -> list.forEach(o -> {
               try {
-                BeanInfo beanInfo = Introspector.getBeanInfo(o.getClass());
-                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-                for (PropertyDescriptor property : propertyDescriptors) {
-                  if (property.getName().equals("class")) continue;
-                  Method method = property.getReadMethod();
-                  Object result = method.invoke(o);
-                  log.info("{}:{}", property.getName(), result);
-                }
+                introspectObject(o);
               } catch (InvocationTargetException | IntrospectionException | IllegalAccessException ignored) {
               }
             })
-
         );
+  }
+
+  private void introspectObject(Object o) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+    log.info("{}", org.boon.Boon.toJson(o));
   }
 }
